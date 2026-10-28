@@ -1,0 +1,53 @@
+{
+  "name": "breakglass",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BreakGlass \u2014 website monitoring and incident investigation for small web agencies",
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build:packages": "npm run build -w @breakglass/shared && npm run build -w @breakglass/core",
+    "build": "npm run build:packages && npm run build -w @breakglass/api && npm run build -w @breakglass/worker && npm run build -w @breakglass/web",
+    "typecheck": "npm run build:packages && npm run typecheck -w @breakglass/api && npm run typecheck -w @breakglass/worker && npm run typecheck -w @breakglass/web",
+    "dev": "npm run build:packages && concurrently -k -n api,worker,web -c blue,magenta,green \"npm:dev:api\" \"npm:dev:worker\" \"npm:dev:web\"",
+    "predev:api": "npm run build:packages",
+    "dev:api": "npm run dev -w @breakglass/api",
+    "dev:worker": "npm run dev -w @breakglass/worker",
+    "dev:web": "npm run dev -w @breakglass/web",
+    "dev:db": "node scripts/local-mongo.mjs",
+    "start": "npm run start -w @breakglass/api",
+    "start:worker": "npm run start -w @breakglass/worker",
+    "start:scheduler": "npm run start:scheduler -w @breakglass/worker",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "npm run typecheck",
+    "smoke": "tsx scripts/smoke.ts",
+    "seed": "tsx scripts/seed-demo.ts",
+    "demo:target": "node scripts/demo-target.mjs",
+    "mail:sink": "node scripts/dev-mail-sink.mjs",
+    "capture:shots": "tsx scripts/capture-shots.ts",
+    "restart": "./scripts/restart-stack.sh",
+    "verify:marketing": "tsx scripts/verify-marketing.ts",
+    "verify:ui": "tsx scripts/ui-check.ts",
+    "verify:browser": "tsx scripts/verify-browser-check.ts",
+    "verify:integrations": "tsx scripts/verify-integrations.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/supertest": "^6.0.3",
+    "concurrently": "^9.1.2",
+    "mongodb-memory-server": "^10.4.3",
+    "playwright": "^1.49.1",
+    "supertest": "^7.3.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7",
+    "vitest": "^3.2.7"
+  }
+}
